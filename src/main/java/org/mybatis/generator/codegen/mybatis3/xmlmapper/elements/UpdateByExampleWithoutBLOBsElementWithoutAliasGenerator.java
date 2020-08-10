@@ -1,0 +1,76 @@
+package org.mybatis.generator.codegen.mybatis3.xmlmapper.elements;
+
+import org.mybatis.generator.api.IntrospectedColumn;
+import org.mybatis.generator.api.dom.OutputUtilities;
+import org.mybatis.generator.api.dom.xml.Attribute;
+import org.mybatis.generator.api.dom.xml.TextElement;
+import org.mybatis.generator.api.dom.xml.XmlElement;
+import org.mybatis.generator.codegen.mybatis3.ListUtilities;
+import org.mybatis.generator.codegen.mybatis3.MyBatis3FormattingUtilities;
+
+import java.util.Iterator;
+
+/**
+ * .
+ *
+ * @author 谢明辉
+ * @date 2020/8/10
+ */
+
+public class UpdateByExampleWithoutBLOBsElementWithoutAliasGenerator extends AbstractXmlElementGenerator {
+
+
+    @Override
+    public void addElements(XmlElement parentElement) {
+        XmlElement answer = new XmlElement("update"); //$NON-NLS-1$
+
+        answer.addAttribute(new Attribute("id", //$NON-NLS-1$
+                introspectedTable.getUpdateByExampleStatementId()));
+
+        answer.addAttribute(new Attribute("parameterType", "map")); //$NON-NLS-1$ //$NON-NLS-2$
+
+        context.getCommentGenerator().addComment(answer);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("update "); //$NON-NLS-1$
+        sb.append(introspectedTable
+                .getAliasedFullyQualifiedTableNameAtRuntime());
+        answer.addElement(new TextElement(sb.toString()));
+
+        // set up for first column
+        sb.setLength(0);
+        sb.append("set "); //$NON-NLS-1$
+
+        Iterator<IntrospectedColumn> iter =
+                ListUtilities.removeGeneratedAlwaysColumns(introspectedTable.getNonBLOBColumns()).iterator();
+        while (iter.hasNext()) {
+            IntrospectedColumn introspectedColumn = iter.next();
+
+            sb.append(MyBatis3FormattingUtilities
+                    .getEscapedColumnName(introspectedColumn));
+            sb.append(" = "); //$NON-NLS-1$
+            sb.append(MyBatis3FormattingUtilities.getParameterClause(
+                    introspectedColumn, "record.")); //$NON-NLS-1$
+
+            if (iter.hasNext()) {
+                sb.append(',');
+            }
+
+            answer.addElement(new TextElement(sb.toString()));
+
+            // set up for the next column
+            if (iter.hasNext()) {
+                sb.setLength(0);
+                OutputUtilities.xmlIndent(sb, 1);
+            }
+        }
+
+        answer.addElement(getUpdateByExampleIncludeElement());
+
+        if (context.getPlugins()
+                .sqlMapUpdateByExampleWithoutBLOBsElementGenerated(answer,
+                        introspectedTable)) {
+            parentElement.addElement(answer);
+        }
+    }
+}
